@@ -13,13 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const db_1 = __importDefault(require("../db"));
+require("./types");
 class PostController {
     createPost(req, res) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { title, content } = req.body;
-                //@ts-ignore
                 const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
                 const newPost = yield db_1.default.query('INSERT INTO posts (title, content, is_published, user_id) VALUES ($1, $2, $3, $4) RETURNING *', [title, content, true, userId]);
                 res.status(201).json({ message: 'Post created', data: newPost.rows[0] });
@@ -48,11 +48,10 @@ class PostController {
         });
     }
     deletePost(req, res) {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const postId = req.params.postId;
-            //@ts-ignore
-            const userId = ((_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id) || "";
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             try {
                 const post = yield db_1.default.query('SELECT * FROM posts WHERE id = $1', [postId]);
                 if (post.rows.length === 0) {
@@ -60,8 +59,7 @@ class PostController {
                 }
                 const postOwnerId = post.rows[0].user_id;
                 const isPublic = post.rows[0].is_published;
-                //@ts-ignore
-                if (isPublic && (postOwnerId === userId || req.user.is_admin)) {
+                if (isPublic && (postOwnerId === userId || ((_b = req.user) === null || _b === void 0 ? void 0 : _b.is_admin))) {
                     yield db_1.default.query('DELETE FROM posts WHERE id = $1', [postId]);
                     res.status(204).json({ message: 'Post deleted' });
                 }
@@ -76,17 +74,17 @@ class PostController {
         });
     }
     publishPost(req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const postId = req.params.postId;
-            //@ts-ignore
-            const userId = req.user.id;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             try {
                 const post = yield db_1.default.query('SELECT * FROM posts WHERE id = $1', [postId]);
                 if (post.rows.length === 0) {
                     res.status(404).json({ message: 'Post not found' });
                 }
                 const postOwnerId = post.rows[0].user_id;
-                if (postOwnerId !== +userId) {
+                if (postOwnerId !== userId) {
                     res.status(403).json({ message: 'Unauthorized' });
                 }
                 const publishedPost = yield db_1.default.query('UPDATE posts SET is_published = $1 WHERE id = $2 RETURNING *', [true, postId]);
@@ -99,10 +97,10 @@ class PostController {
         });
     }
     hidePost(req, res) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const postId = req.params.postId;
-            //@ts-ignore
-            const userId = req.user.id;
+            const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a.id;
             try {
                 const post = yield db_1.default.query('SELECT * FROM posts WHERE id = $1', [postId]);
                 if (post.rows.length === 0) {

@@ -1,13 +1,17 @@
-version: '3'
+version: '3.4'
 services:
+  myservice:
+    networks:
+      - mynetwork
   node-app:
-
     build:
       context: .
       dockerfile: Dockerfile
 
     ports:
-      - "3000:3000"
+      - "8080:8080"
+
+    command: npm run dev
 
     working_dir: /app
 
