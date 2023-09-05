@@ -13,7 +13,7 @@ class UserController {
     }
 
     async getUserById(req: Request, res: Response) {
-        const userId = parseInt(req.params.id); // Convert the parameter to an integer
+        const userId = parseInt(req.params.id);
         if (isNaN(userId)) {
             return res.status(400).json({ message: 'Invalid user ID' });
         }

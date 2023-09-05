@@ -4,23 +4,20 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 class AuthController {
     async signUp(req: Request, res: Response): Promise<void> {
         try {
             const { name, email, password } = req.body;
 
-            // Hash the password
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            // Create a new user in the database
             const newUser = await db.query(
                 'INSERT INTO Persons (name, email, password) VALUES ($1, $2, $3) RETURNING *',
                 [name, email, hashedPassword]
             );
 
-            // Create a JWT token
             const token = jwt.sign({ userId: newUser.rows[0].id }, process.env.SECRET_KEY as string);
 
             res.status(201).json({ user: newUser.rows[0], token });
@@ -34,21 +31,18 @@ class AuthController {
         try {
             const { email, password } = req.body;
 
-            // Find the user by email
             const user = await db.query('SELECT * FROM Persons WHERE email = $1', [email]);
 
             if (user.rows.length === 0) {
                  res.status(401).json({ error: 'User not found' });
             }
 
-            // Compare passwords
             const passwordMatch = await bcrypt.compare(password, user.rows[0].password);
 
             if (!passwordMatch) {
                  res.status(401).json({ error: 'Invalid password' });
             }
 
-            // Create a JWT token
             const token = jwt.sign({ userId: user.rows[0].id }, process.env.SECRET_KEY as string);
 
             res.json({ user: user.rows[0], token });

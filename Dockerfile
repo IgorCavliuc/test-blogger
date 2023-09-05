@@ -1,17 +1,30 @@
-# Use the official Node.js image as the base image
-FROM node:14
+#
+#FROM node:14
+#
+#WORKDIR /app
+#
+#COPY . ./
+#
+#RUN npm install
+#
+#EXPOSE 8080
+#
+#CMD ["node", "./src/app.ts"]
 
-# Set the working directory in the container to /app
+
+
+FROM node:18
+
 WORKDIR /app
 
-# Copy the contents of the "src" directory to the container's working directory
-COPY ./src ./src
+COPY package*.json ./
 
-# Install the application dependencies
+RUN npm cache clean --force
+RUN npm install --legacy-peer-deps
 RUN npm install
 
-# Expose port 8080 for the application
-EXPOSE 8080
+COPY . .
 
-# Specify the command to run your application
-CMD ["node", "src/app.js"]
+RUN npm run build
+
+CMD ["npm", "start"]

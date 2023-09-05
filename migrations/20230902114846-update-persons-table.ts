@@ -1,18 +1,14 @@
-const { DataTypes } = require('sequelize');
+import { QueryInterface, DataTypes, Sequelize } from 'sequelize';
 
-'use strict';
-
-/** @type {import('sequelize-cli').Migration} */
-module.exports = {
-  async up (queryInterface, Sequelize) {
-    queryInterface.addColumn('persons', 'created_at', {
+export default {
+  async up(queryInterface: QueryInterface, sequelize: Sequelize) {
+    await queryInterface.addColumn('persons', 'created_at', {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: Sequelize.fn('NOW')
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
     });
   },
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface: QueryInterface) {
     await queryInterface.removeColumn('persons', 'created_at');
-  }
-
+  },
 };

@@ -16,12 +16,7 @@ class Persons extends Model<PersonsAttributes> {
     public is_admin!: boolean;
     public created_at!: Date;
 
-    // You can define class methods and relationships here if needed
-
-    // If you have associations, define them here using the static method `associate`
-
     public static associate(models: any): void {
-        // Define associations here (e.g., belongsTo, hasMany, etc.)
     }
 }
 
@@ -47,14 +42,14 @@ Persons.init(
         created_at: {
             type: DataTypes.DATE,
             allowNull: false,
-            field: 'created_at', // Specify the column name in the database
+            field: 'created_at',
         },
     },
     {
         sequelize,
-        modelName: 'persons', // Use 'Persons' as the modelName
-        tableName: 'persons', // Use 'persons' as the tableName
+        modelName: 'persons',
+        tableName: 'persons',
     }
 );
 
-export default Persons; // Export the Persons model
+export default Persons;
