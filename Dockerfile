@@ -17,14 +17,15 @@ FROM node:18
 
 WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm cache clean --force
-RUN npm install --legacy-peer-deps
-RUN npm install
-
 COPY . .
 
-RUN npm run build
+#RUN apt-get update
+
+#RUN apt-get install bcrypt
+
+RUN npm install
+
+EXPOSE 8080
 
 CMD ["npm", "start"]
+
